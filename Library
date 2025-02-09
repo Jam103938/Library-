@@ -75,4 +75,58 @@ function Jam:AddNewButton(tabName, buttonName, state)
     end)
 end
 
+function Jam:AddNewToggle(tabName, toggleName, state, callback)
+    local tab = contentFrame:FindFirstChild(tabName)
+    if not tab then return end
+
+    local toggle = Instance.new("TextButton", tab)
+    toggle.Size = UDim2.new(0.8, 0, 0, 40)
+    toggle.Position = UDim2.new(0.1, 0, #tab:GetChildren() * 0.15, 0)
+    toggle.BackgroundColor3 = Color3.fromRGB(100, 100, 100)
+    toggle.TextColor3 = Color3.fromRGB(255, 255, 255)
+    toggle.Text = toggleName .. " - OFF"
+
+    toggle.MouseButton1Click:Connect(function()
+        state = not state
+        toggle.Text = toggleName .. (state and " - ON" or " - OFF")
+        callback(state)
+    end)
+end
+
+function Jam:AddNewSlider(tabName, sliderName, min, max, default, callback)
+    local tab = contentFrame:FindFirstChild(tabName)
+    if not tab then return end
+
+    local slider = Instance.new("TextButton", tab)
+    slider.Size = UDim2.new(0.8, 0, 0, 40)
+    slider.Position = UDim2.new(0.1, 0, #tab:GetChildren() * 0.15, 0)
+    slider.BackgroundColor3 = Color3.fromRGB(120, 120, 120)
+    slider.TextColor3 = Color3.fromRGB(255, 255, 255)
+    slider.Text = sliderName .. " - " .. default
+
+    slider.MouseButton1Click:Connect(function()
+        local newValue = math.random(min, max)
+        slider.Text = sliderName .. " - " .. newValue
+        callback(newValue)
+    end)
+end
+
+function Jam:AddNewColorPicker(tabName, pickerName, defaultColor, callback)
+    local tab = contentFrame:FindFirstChild(tabName)
+    if not tab then return end
+
+    local picker = Instance.new("TextButton", tab)
+    picker.Size = UDim2.new(0.8, 0, 0, 40)
+    picker.Position = UDim2.new(0.1, 0, #tab:GetChildren() * 0.15, 0)
+    picker.BackgroundColor3 = defaultColor
+    picker.TextColor3 = Color3.fromRGB(255, 255, 255)
+    picker.Text = pickerName
+
+    picker.MouseButton1Click:Connect(function()
+        local newColor = Color3.fromRGB(math.random(0, 255), math.random(0, 255), math.random(0, 255))
+        picker.BackgroundColor3 = newColor
+        callback(newColor)
+    end)
+end
+
 _G.Jam = Jam
