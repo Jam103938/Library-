@@ -29,17 +29,19 @@ if not mainGui then
     contentFrame.Name = "ContentFrame"
 end
 
-local tabContainer = mainGui.MainFrame.TabContainer
-local contentFrame = mainGui.MainFrame.ContentFrame
+local tabContainer = mainGui:FindFirstChild("MainFrame"):FindFirstChild("TabContainer")
+local contentFrame = mainGui:FindFirstChild("MainFrame"):FindFirstChild("ContentFrame")
 
 function Jam:AddNewTab(tabName)
+    if not tabContainer or not contentFrame then return end  -- Ensure GUI exists
+
     local tabButton = Instance.new("TextButton", tabContainer)
     tabButton.Size = UDim2.new(1, 0, 0, 30)
     tabButton.BackgroundColor3 = Color3.fromRGB(60, 60, 60)
     tabButton.TextColor3 = Color3.fromRGB(255, 255, 255)
     tabButton.Text = tabName
-    tabButton.LayoutOrder = #tabContainer:GetChildren()
-    
+    tabButton.LayoutOrder = #tabContainer:GetChildren() + 1  -- Fix indexing
+
     local tabContent = Instance.new("Frame", contentFrame)
     tabContent.Size = UDim2.new(1, 0, 1, 0)
     tabContent.BackgroundColor3 = Color3.fromRGB(20, 20, 20)
@@ -54,79 +56,8 @@ function Jam:AddNewTab(tabName)
         end
         tabContent.Visible = true
     end)
-    
+
     return tabContent
-end
-
-function Jam:AddNewButton(tabName, buttonName, state)
-    local tab = contentFrame:FindFirstChild(tabName)
-    if not tab then return end
-
-    local button = Instance.new("TextButton", tab)
-    button.Size = UDim2.new(0.8, 0, 0, 40)
-    button.Position = UDim2.new(0.1, 0, #tab:GetChildren() * 0.15, 0)
-    button.BackgroundColor3 = Color3.fromRGB(80, 80, 80)
-    button.TextColor3 = Color3.fromRGB(255, 255, 255)
-    button.Text = buttonName .. " - " .. tostring(state)
-    
-    button.MouseButton1Click:Connect(function()
-        state = not state
-        button.Text = buttonName .. " - " .. tostring(state)
-    end)
-end
-
-function Jam:AddNewToggle(tabName, toggleName, state, callback)
-    local tab = contentFrame:FindFirstChild(tabName)
-    if not tab then return end
-
-    local toggle = Instance.new("TextButton", tab)
-    toggle.Size = UDim2.new(0.8, 0, 0, 40)
-    toggle.Position = UDim2.new(0.1, 0, #tab:GetChildren() * 0.15, 0)
-    toggle.BackgroundColor3 = Color3.fromRGB(100, 100, 100)
-    toggle.TextColor3 = Color3.fromRGB(255, 255, 255)
-    toggle.Text = toggleName .. " - OFF"
-
-    toggle.MouseButton1Click:Connect(function()
-        state = not state
-        toggle.Text = toggleName .. (state and " - ON" or " - OFF")
-        callback(state)
-    end)
-end
-
-function Jam:AddNewSlider(tabName, sliderName, min, max, default, callback)
-    local tab = contentFrame:FindFirstChild(tabName)
-    if not tab then return end
-
-    local slider = Instance.new("TextButton", tab)
-    slider.Size = UDim2.new(0.8, 0, 0, 40)
-    slider.Position = UDim2.new(0.1, 0, #tab:GetChildren() * 0.15, 0)
-    slider.BackgroundColor3 = Color3.fromRGB(120, 120, 120)
-    slider.TextColor3 = Color3.fromRGB(255, 255, 255)
-    slider.Text = sliderName .. " - " .. default
-
-    slider.MouseButton1Click:Connect(function()
-        local newValue = math.random(min, max)
-        slider.Text = sliderName .. " - " .. newValue
-        callback(newValue)
-    end)
-end
-
-function Jam:AddNewColorPicker(tabName, pickerName, defaultColor, callback)
-    local tab = contentFrame:FindFirstChild(tabName)
-    if not tab then return end
-
-    local picker = Instance.new("TextButton", tab)
-    picker.Size = UDim2.new(0.8, 0, 0, 40)
-    picker.Position = UDim2.new(0.1, 0, #tab:GetChildren() * 0.15, 0)
-    picker.BackgroundColor3 = defaultColor
-    picker.TextColor3 = Color3.fromRGB(255, 255, 255)
-    picker.Text = pickerName
-
-    picker.MouseButton1Click:Connect(function()
-        local newColor = Color3.fromRGB(math.random(0, 255), math.random(0, 255), math.random(0, 255))
-        picker.BackgroundColor3 = newColor
-        callback(newColor)
-    end)
 end
 
 _G.Jam = Jam
