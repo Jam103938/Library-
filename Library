@@ -1,0 +1,78 @@
+local Jam = {}
+
+local player = game.Players.LocalPlayer
+local playerGui = player:FindFirstChild("PlayerGui") or Instance.new("PlayerGui", player)
+local mainGui = playerGui:FindFirstChild("CustomTabsGUI")
+
+if not mainGui then
+    mainGui = Instance.new("ScreenGui", playerGui)
+    mainGui.Name = "CustomTabsGUI"
+
+    local mainFrame = Instance.new("Frame", mainGui)
+    mainFrame.Size = UDim2.new(0.4, 0, 0.6, 0)
+    mainFrame.Position = UDim2.new(0.3, 0, 0.2, 0)
+    mainFrame.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
+    mainFrame.Name = "MainFrame"
+
+    local tabContainer = Instance.new("Frame", mainFrame)
+    tabContainer.Size = UDim2.new(0.2, 0, 1, 0)
+    tabContainer.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
+    tabContainer.Name = "TabContainer"
+
+    local tabList = Instance.new("UIListLayout", tabContainer)
+    tabList.SortOrder = Enum.SortOrder.LayoutOrder
+
+    local contentFrame = Instance.new("Frame", mainFrame)
+    contentFrame.Size = UDim2.new(0.8, 0, 1, 0)
+    contentFrame.Position = UDim2.new(0.2, 0, 0, 0)
+    contentFrame.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
+    contentFrame.Name = "ContentFrame"
+end
+
+local tabContainer = mainGui.MainFrame.TabContainer
+local contentFrame = mainGui.MainFrame.ContentFrame
+
+function Jam:AddNewTab(tabName)
+    local tabButton = Instance.new("TextButton", tabContainer)
+    tabButton.Size = UDim2.new(1, 0, 0, 30)
+    tabButton.BackgroundColor3 = Color3.fromRGB(60, 60, 60)
+    tabButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+    tabButton.Text = tabName
+    tabButton.LayoutOrder = #tabContainer:GetChildren()
+    
+    local tabContent = Instance.new("Frame", contentFrame)
+    tabContent.Size = UDim2.new(1, 0, 1, 0)
+    tabContent.BackgroundColor3 = Color3.fromRGB(20, 20, 20)
+    tabContent.Visible = false
+    tabContent.Name = tabName
+
+    tabButton.MouseButton1Click:Connect(function()
+        for _, v in pairs(contentFrame:GetChildren()) do
+            if v:IsA("Frame") then
+                v.Visible = false
+            end
+        end
+        tabContent.Visible = true
+    end)
+    
+    return tabContent
+end
+
+function Jam:AddNewButton(tabName, buttonName, state)
+    local tab = contentFrame:FindFirstChild(tabName)
+    if not tab then return end
+
+    local button = Instance.new("TextButton", tab)
+    button.Size = UDim2.new(0.8, 0, 0, 40)
+    button.Position = UDim2.new(0.1, 0, #tab:GetChildren() * 0.15, 0)
+    button.BackgroundColor3 = Color3.fromRGB(80, 80, 80)
+    button.TextColor3 = Color3.fromRGB(255, 255, 255)
+    button.Text = buttonName .. " - " .. tostring(state)
+    
+    button.MouseButton1Click:Connect(function()
+        state = not state
+        button.Text = buttonName .. " - " .. tostring(state)
+    end)
+end
+
+_G.Jam = Jam
